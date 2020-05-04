@@ -138,6 +138,15 @@ namespace StockForecast
                     Close = 15.720000f,
                     AdjustedClose = 15.719150f,
                     Volume = 115633300
+                },
+                new StockInfo
+                {
+                    Open = 17.51f,
+                    High = 17.62f,
+                    Low = 17.20f,
+                    Close = 17.25f,
+                    AdjustedClose = 0f,
+                    Volume = 0
                 }
             };
 
@@ -149,9 +158,9 @@ namespace StockForecast
                 StockInfoPrediction prediction = predictor.Predict(stock);
 
                 Console.WriteLine("---------------- PREVISÃO ----------------");
-                Console.WriteLine($"O preço previsto para a ação é de R$ {prediction.Close:0.##}");
-                Console.WriteLine($"O preço atual é de R$ {stock.Close:0.##}");
-                Console.WriteLine($"Diferença de R$ {prediction.Close - stock.Close:0.##}");
+                Console.WriteLine($"O preço previsto para a ação é de R$ {prediction.Close:0.#0}");
+                Console.WriteLine($"O preço atual é de R$ {stock.Close:0.#0}");
+                Console.WriteLine($"Diferença de R$ {prediction.Close - stock.Close:0.#0}");
                 Console.WriteLine("------------------------------------------");
             }
         }
