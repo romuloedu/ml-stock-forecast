@@ -31,7 +31,7 @@ namespace StockForecast
 
             PrintMetrics(metrics);
 
-            PredictPrice(context);
+            PredictPrice(context, model);
 
             Console.ReadLine();
         }
@@ -54,9 +54,9 @@ namespace StockForecast
 
         private static ITransformer Train(MLContext context, IDataView trainData)
         {
-            SdcaRegressionTrainer sdcaTrainer = context.Regression.Trainers.Sdca();
+            var trainer = context.Regression.Trainers.Sdca();
 
-            string[] featureColumns = { "Open", "High", "Low", "AdjustedClose", "Volume" };
+            string[] featureColumns = { "Open", "High", "Low", "Volume" };
 
             // Constroi o fluxo de transformação de dados e processamento do modelo.
             IEstimator<ITransformer> pipeline = context.Transforms
@@ -64,7 +64,7 @@ namespace StockForecast
             .Append(context.Transforms.Concatenate("Features", featureColumns))
             .Append(context.Transforms.NormalizeMinMax("Features"))
             .AppendCacheCheckpoint(context)
-            .Append(sdcaTrainer);
+            .Append(trainer);
 
             ITransformer model = pipeline.Fit(trainData);
 
@@ -109,9 +109,51 @@ namespace StockForecast
             Console.WriteLine("--------------------------------------------------");
         }
 
-        private static void PredictPrice(MLContext context)
+        private static void PredictPrice(MLContext context, ITransformer model)
         {
-            throw new NotImplementedException();
+            StockInfo[] stocks = {
+                new StockInfo
+                {
+                    Open = 25.700001f,
+                    High = 25.780001f,
+                    Low = 25.430000f,
+                    Close = 25.450001f,
+                    AdjustedClose = 21.730824f,
+                    Volume = 17841800
+                },
+                new StockInfo
+                {
+                    Open = 30.799999f,
+                    High = 30.889999f,
+                    Low = 29.750000f,
+                    Close = 29.920000f,
+                    AdjustedClose = 29.918381f,
+                    Volume = 73522900
+                },
+                new StockInfo
+                {
+                    Open = 16.670000f,
+                    High = 16.760000f,
+                    Low = 15.530000f,
+                    Close = 15.720000f,
+                    AdjustedClose = 15.719150f,
+                    Volume = 115633300
+                }
+            };
+
+            PredictionEngine<StockInfo, StockInfoPrediction> predictor = context.Model
+            .CreatePredictionEngine<StockInfo, StockInfoPrediction>(model);
+
+            foreach (StockInfo stock in stocks)
+            {
+                StockInfoPrediction prediction = predictor.Predict(stock);
+
+                Console.WriteLine("---------------- PREVISÃO ----------------");
+                Console.WriteLine($"O preço previsto para a ação é de R$ {prediction.Close:0.##}");
+                Console.WriteLine($"O preço atual é de R$ {stock.Close:0.##}");
+                Console.WriteLine($"Diferença de R$ {prediction.Close - stock.Close:0.##}");
+                Console.WriteLine("------------------------------------------");
+            }
         }
     }
 }
