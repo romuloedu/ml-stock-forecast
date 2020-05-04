@@ -1,5 +1,8 @@
 # Stock Forecast (Machine Learning)
-## Prevendo o preço de ações com o framework ML.NET da Microsoft.
+
+Prevendo o preço de ações com o framework de aprendizado de máquina da Microsoft: O ML.NET!
+
+---
 
 Esta aplicação foi construída em C#, utilizando o framework chamado [ML.NET](https://docs.microsoft.com/pt-br/dotnet/machine-learning/), fornecido pela Microsoft para trabalhar com algoritmos de aprendizado de máquina.
 
